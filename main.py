@@ -12,6 +12,12 @@ def search_id(graph_vertex, id):
 
     return False
 
+
+def interface():
+    order = int(input("Enter the desired operation code"))
+    print("1..signin\n2..signup")
+
+
 if __name__ == '__main__':
 
     d = open('users.json')
