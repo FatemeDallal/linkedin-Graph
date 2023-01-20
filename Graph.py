@@ -11,6 +11,5 @@ class Graph:
     def add_edge(self, u, v):
         u.adjV.add(v)
         v.adjV.add(u)
-        self.vertexes.add(u)
-        self.vertexes.add(v)
+
 
