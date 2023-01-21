@@ -4,6 +4,14 @@ from Graph import Graph, Vertex
 from User import User
 
 
+def contain(id, ids):
+    for i in ids:
+        if i == id:
+            return True
+
+    return False
+
+
 def search_id(id):
     for i in graph.vertexes:
         if i.data.id == id:
@@ -107,7 +115,6 @@ def more_bfs(bfs, id, first, second):
 
 
 def fewer_bfs(bfs, id, first, second):
-
     llist = set()
 
     for i in bfs:
@@ -213,6 +220,34 @@ def get_user(name, id):
         return False
 
 
+def edit_datas(id, ids_person):
+
+    v = search_id(id)
+    ids_person = str(ids_person)
+    u = search_id(ids_person)
+    graph.add_edge(u, v)
+
+    v.data.connection_id.append(ids_person)
+    u.data.connection_id.append(id)
+
+    d = open('users.json')
+
+    data = json.load(d)
+
+    for i in data:
+        if i.get("id") == id:
+            i["connectionId"].append(ids_person)
+
+    for i in data:
+        if i.get("id") == ids_person:
+            i["connectionId"].append(id)
+
+    with open('users.json', 'w') as f:
+        json.dump(data, f, indent=2)
+
+    f.close()
+
+
 def login():
     n = input("Enter your name")
     i = input("Enter your id")
@@ -239,11 +274,32 @@ def login():
             cnt = 0
             for i in offers:
                 if cnt < 20:
-                    print(i.data.id, i.data.name, i.data.field, i.data.work_place, i.data.specialties)
+                    print(
+                        "id : " + i.data.id + " , " + "name : " + i.data.name + " , " + "field : " + i.data.field + " , " +
+                        "university location : " + i.data.university_location + " , " + "workplace : " + i.data.work_place + " , " +
+                        "specialties :", i.data.specialties)
+                    if contain(vertex.data.id, i.data.connection_id):
+                        print("You connected to this person")
+                    else:
+                        print("You are not connected to this person")
                     cnt += 1
                 else:
                     break
             print("\n")
+
+            yse_no = int(input("Do you want to communicate with any of these people?\n1..Yes 2..No"))
+
+            if yse_no == 1:
+
+                while True:
+
+                    id_person = int(input("Enter id's person"))
+
+                    edit_datas(vertex.data.id, id_person)
+
+                    no_yes = int(input("Is it still individual?\n1..Yes 2..No"))
+                    if no_yes == 2:
+                        break
 
         else:
             print("The entered code is incorrect")
@@ -269,7 +325,6 @@ def interface():
         n = int(input("Are you exit\n1..Yes  2..No"))
         if n == 1:
             break
-
 
 
 if __name__ == '__main__':
