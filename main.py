@@ -4,6 +4,16 @@ from Graph import Graph, Vertex
 from User import User
 
 
+def max_id():
+    mx = 0
+
+    for i in graph.vertexes:
+        if int(i.data.id) > mx:
+            mx = int(i.data.id)
+
+    return mx
+
+
 def contain(id, ids):
     for i in ids:
         if i == id:
@@ -248,7 +258,7 @@ def edit_datas(id, ids_person):
     f.close()
 
 
-def login():
+def signin():
     n = input("Enter your name")
     i = input("Enter your id")
 
@@ -308,16 +318,52 @@ def login():
         print("No user found")
 
 
+def signup():
+
+    name = input("Enter your name")
+    date_of_birth = input("Enter your date of birthday")
+    university_location = input("Enter your university location")
+    field = input("Enter your field")
+    work_place = input("Enter your work place")
+    specialties = input("Enter your specialties").split(" ")
+
+    id = str(int(max_id()) + 1)
+
+    graph.vertexes.add(User(id, name, date_of_birth, university_location, field, work_place, specialties, []))
+
+    d = open('users.json')
+
+    data = json.load(d)
+
+    data.append(
+        {
+            "id": id,
+            "name": name,
+            "dateOfBirth": date_of_birth,
+            "universityLocation": university_location,
+            "field": field,
+            "workplace": work_place,
+            "specialties": specialties,
+            "connectionId": []
+        }
+    )
+
+    with open('users.json', 'w') as f:
+        json.dump(data, f, indent=2)
+
+    f.close()
+
+
 def interface():
     while True:
         print("1..signin\n2..signup\n")
         order = int(input("Enter the desired operation code"))
 
         if order == 1:
-            login()
+            signin()
 
         elif order == 2:
-            pass
+            signup()
 
         else:
             print("The entered code is incorrect")
