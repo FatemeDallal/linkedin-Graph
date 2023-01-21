@@ -196,16 +196,13 @@ def suggestion(id, first, second):
 
     bfs_list = BFS(id)
 
-    if len(bfs_list) > 20:
+    if len(bfs_list) >= 20:
 
         suggestion_list = more_bfs(bfs_list, id, first, second)
 
     elif len(bfs_list) < 20:
 
         suggestion_list = fewer_bfs(bfs_list, id, first, second)
-
-    else:
-        suggestion_list = bfs_list
 
     return suggestion_list
 
@@ -258,6 +255,15 @@ def edit_datas(id, ids_person):
     f.close()
 
 
+def except_name(name):
+
+    for i in graph.vertexes:
+        if i.data.name == name:
+            return False
+
+    return True
+
+
 def get_connect_users(id):
 
     v = search_id(id)
@@ -288,7 +294,6 @@ def signin():
 
             print("\n")
             for i in graph.vertexes:
-
                 print(
                     "id : " + i.data.id + " , " + "name : " + i.data.name + " , " + "field : " + i.data.field + " , " +
                     "university location : " + i.data.university_location + " , " + "workplace : " + i.data.work_place + " , " +
@@ -314,7 +319,34 @@ def signin():
                         break
 
         elif order == 2:
-            pass
+
+            iid = input("Enter the desired id")
+
+            desired_user = search_id(iid)
+
+            print(
+                "id : " + desired_user.data.id + " , " + "name : " + desired_user.data.name + " , " + "field : " + desired_user.data.field + " , " +
+                "university location : " + desired_user.data.university_location + " , " + "workplace : " + desired_user.data.work_place + " , " +
+                "specialties :", desired_user.data.specialties)
+            if contain(vertex.data.id, desired_user.data.connection_id):
+                print("You connected to this person")
+            else:
+                print("You are not connected to this person")
+
+            print("list of Followers : ")
+
+            connection_user = get_connect_users(desired_user.data.id)
+
+            for i in connection_user:
+                print(
+                    "\nid : " + i.id +
+                    "\nname : " + i.name +
+                    "\ndate of birth : " + i.data.date_of_birth +
+                    "\nuniversity location : " + i.university_location +
+                    "\nfield : " + i.field +
+                    "\nworkplace : " + i.work_place +
+                    "\nspecialties : " + i.specialties
+                )
 
         elif order == 3:
             print("1..university location\n2..field\n3..work place\n4..specialties")
@@ -389,42 +421,53 @@ def signin():
 
 def signup():
 
-    name = input("Enter your name")
-    date_of_birth = input("Enter your date of birthday")
-    university_location = input("Enter your university location")
-    field = input("Enter your field")
-    work_place = input("Enter your work place")
-    specialties = input("Enter your specialties").split(" ")
+    check = True
 
-    id = str(int(max_id()) + 1)
+    while check:
 
-    graph.vertexes.add(User(id, name, date_of_birth, university_location, field, work_place, specialties, []))
+        name = input("Enter your name")
 
-    d = open('users.json')
+        if except_name(name):
+            date_of_birth = input("Enter your date of birthday")
+            university_location = input("Enter your university location")
+            field = input("Enter your field")
+            work_place = input("Enter your work place")
+            specialties = input("Enter your specialties").split(" ")
 
-    data = json.load(d)
+            id = str(int(max_id()) + 1)
 
-    data.append(
-        {
-            "id": id,
-            "name": name,
-            "dateOfBirth": date_of_birth,
-            "universityLocation": university_location,
-            "field": field,
-            "workplace": work_place,
-            "specialties": specialties,
-            "connectionId": []
-        }
-    )
+            graph.vertexes.add(User(id, name, date_of_birth, university_location, field, work_place, specialties, []))
 
-    with open('users.json', 'w') as f:
-        json.dump(data, f, indent=2)
+            d = open('users.json')
 
-    f.close()
+            data = json.load(d)
 
-    print("Registration was successful")
+            data.append(
+                {
+                    "id": id,
+                    "name": name,
+                    "dateOfBirth": date_of_birth,
+                    "universityLocation": university_location,
+                    "field": field,
+                    "workplace": work_place,
+                    "specialties": specialties,
+                    "connectionId": []
+                }
+            )
 
-    print("your name : " + name + "\nyour id : " + id)
+            with open('users.json', 'w') as f:
+                json.dump(data, f, indent=2)
+
+            f.close()
+
+            print("Registration was successful")
+
+            print("your name : " + name + "\nyour id : " + id)
+
+            check = False
+
+        else:
+            print("Username is available")
 
 
 def interface():
