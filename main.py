@@ -258,17 +258,60 @@ def edit_datas(id, ids_person):
     f.close()
 
 
+def get_connect_users(id):
+
+    v = search_id(id)
+
+    connect_users = set()
+
+    for i in v.data.connection_id:
+        u = search_id(i)
+        connect_users.add(u.data)
+
+    return connect_users
+
+
 def signin():
     n = input("Enter your name")
     i = input("Enter your id")
 
     vertex = get_user(n, i)
+
     if vertex is not False:
-        print("1..View the list of users\n2..User search\n3..Offers\n")
+
+        print("Welcome " + vertex.data.name)
+
+        print("\n1..View the list of users\n2..User search\n3..Offers\n4..view information")
         order = int(input("Enter the desired operation code"))
 
         if order == 1:
-            pass
+
+            print("\n")
+            for i in graph.vertexes:
+
+                print(
+                    "id : " + i.data.id + " , " + "name : " + i.data.name + " , " + "field : " + i.data.field + " , " +
+                    "university location : " + i.data.university_location + " , " + "workplace : " + i.data.work_place + " , " +
+                    "specialties :", i.data.specialties)
+                if contain(vertex.data.id, i.data.connection_id):
+                    print("You connected to this person")
+                else:
+                    print("You are not connected to this person")
+            print("\n")
+
+            yse_no = int(input("Do you want to communicate with any of these people?\n1..Yes 2..No"))
+
+            if yse_no == 1:
+
+                while True:
+
+                    id_person = int(input("Enter id's person"))
+
+                    edit_datas(vertex.data.id, id_person)
+
+                    no_yes = int(input("Is it still individual?\n1..Yes 2..No"))
+                    if no_yes == 2:
+                        break
 
         elif order == 2:
             pass
@@ -311,6 +354,32 @@ def signin():
                     if no_yes == 2:
                         break
 
+        elif order == 4:
+
+            print(
+                "your information : " +
+                "\nid : " + vertex.data.id +
+                "\nname : " + vertex.data.name +
+                "\ndate of birth : " + vertex.data.date_of_birth +
+                "\nuniversity location : " + vertex.data.university_location +
+                "\nfield : " + vertex.data.field +
+                "\nworkplace : " + vertex.data.work_place +
+                "\nspecialties : " + vertex.data.specialties
+            )
+
+            c_users = get_connect_users(vertex.data.id)
+
+            for i in c_users:
+                print(
+                    "\nid : " + i.id +
+                    "\nname : " + i.name +
+                    "\ndate of birth : " + i.data.date_of_birth +
+                    "\nuniversity location : " + i.university_location +
+                    "\nfield : " + i.field +
+                    "\nworkplace : " + i.work_place +
+                    "\nspecialties : " + i.specialties
+                )
+
         else:
             print("The entered code is incorrect")
 
@@ -352,6 +421,10 @@ def signup():
         json.dump(data, f, indent=2)
 
     f.close()
+
+    print("Registration was successful")
+
+    print("your name : " + name + "\nyour id : " + id)
 
 
 def interface():
